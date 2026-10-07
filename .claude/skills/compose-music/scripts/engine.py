@@ -5,7 +5,8 @@ import pretty_midi as pm
 from music import Piece, N
 
 CH = {'Gm': [7, 10, 2], 'Gm7': [7, 10, 2, 5], 'Cm': [0, 3, 7], 'Cm7': [0, 3, 7, 10], 'D7': [2, 6, 9, 0],
-      'Eb': [3, 7, 10], 'Bb': [10, 2, 5], 'F': [5, 9, 0], 'Ab': [8, 0, 3], 'C': [0, 4, 7]}
+      'Eb': [3, 7, 10], 'Bb': [10, 2, 5], 'F': [5, 9, 0], 'Ab': [8, 0, 3], 'C': [0, 4, 7],
+      'Ebmaj7': [3, 7, 10, 2], 'Bbmaj7': [10, 2, 5, 9], 'F7': [5, 9, 0, 3], 'Abmaj7': [8, 0, 3, 7], 'D7b9': [2, 6, 9, 0, 3]}
 NAT = [7, 9, 10, 0, 2, 3, 5]; HARM = [7, 9, 10, 0, 2, 3, 6]
 
 
@@ -55,7 +56,10 @@ def below(ch, top, n=2, gap=3, lo=0):
     return out
 
 
-def lh_chord(ch): return [m for m in range(50, 70) if m % 12 in CH[ch]][:3]   # three tones from D3 up
+def lh_chord(ch):
+    """Three chord tones from D3 up; for 7th chords the shell 3rd-5th-7th (the root is in the bass)."""
+    pcs = CH[ch][1:4] if len(CH[ch]) >= 4 else CH[ch]
+    return [m for m in range(50, 70) if m % 12 in pcs][:3]
 def lh_bass(ch): return up(CH[ch][0], 38)                                       # root between D2 and C#3
 
 
@@ -93,6 +97,10 @@ class Engine:
             for n in lh_chord(c1): add(L, n, t0 + B, B * .45, v)
             for n in (b2, b2 + 12): add(L, n, t0 + 2 * B, B * .9, v + 8)
             for n in lh_chord(c2): add(L, n, t0 + 2.5 * B, B * .45, v - 4); add(L, n, t0 + 3 * B, B * .9, v)
+        elif pat == 'wave':                                   # broken chord in 8ths: bass, then the three chord tones
+            for h, ch in enumerate((c1, c2)):
+                x = t0 + 2 * h * B; c = lh_chord(ch)
+                for i, n in enumerate([lh_bass(ch)] + c): add(L, n, x + i * B / 2, B * .8, v + (8 if i == 0 else 0))
         elif pat == 'hold':
             b = lh_bass(c1)
             for n in (b, b + 12): add(L, n, t0, 4 * B, v + 8)
@@ -110,7 +118,7 @@ class Engine:
                 add(P.inst, m, x, dur, vv, late)
                 if mode == 'chord':
                     for k in below(ch, m): add(P.inst, k, x, dur, vv - 10, late)
-                elif mode == 'oct':
+                elif mode == 'oct' and d >= .5:
                     add(P.inst, m - 12, x, dur, vv - 2, late)
                     for k in below(ch, m, 1, 3, m - 11): add(P.inst, k, x, dur, vv - 12, late)
                 elif mode == 'sing' and d >= 1:

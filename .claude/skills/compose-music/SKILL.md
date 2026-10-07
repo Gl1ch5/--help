@@ -28,7 +28,8 @@ Claude cannot emit audio directly. The workflow is: write the notes as code -> s
 - **Mixed Mozart + Chopin + Rachmaninoff**: see `scripts/fantasy_g_minor.py` (Mozart period with runs, Chopin ornamented nocturne with turns and rubato, Rachmaninoff climax; left hand only bass + chords).
 - **Tango (Piazzolla spirit)**: see `scripts/tango_g_minor.py` built on `scripts/engine.py` (shared two-hand helpers: left hand bass + chords, right hand melody/chords/octaves/runs; 3+3+2 accents, chromatic fire section).
 - **Two-part nocturne (slow + fast)**: see `scripts/nocturne_two_parts.py` (two Engines at different tempi merged into one MIDI with a tempo change via `mido`; `score.py` follows tempo changes). Unusual-melody devices: Dorian raised sixth, 7th leap, Neapolitan Ab chord, chromatic sighs.
-- **Shostakovich**: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
+- **Improvisation material** (lead sheet + development ladder + backing track): see `scripts/improvisation_ladder.py` (melody and chord symbols are the single source for both the LilyPond lead sheet and the audio; `embellish()` ornaments the melody; `--key-flats 2` in score.py for G minor).
+- **Shostakovich**/: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
 
 ## Sheet music
 
