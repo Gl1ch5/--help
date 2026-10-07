@@ -24,6 +24,10 @@ Claude cannot emit audio directly. The workflow is: write the notes as code -> s
 - **Chopin Revolutionary-style etude**: see `scripts/revolutionary_etude.py` (non-stop 16th arpeggio LH, octave+chord RH, fff); render loud with `render.py in.mid out.mp3 "" -11`.
 - **Shostakovich**: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
 
+## Sheet music
+
+`python scripts/score.py piece.mid score.pdf "Title" [beats_per_bar]` makes a piano score PDF (needs `apt-get install -y lilypond` and `pip install music21`). With two MIDI instruments (right hand first, left hand second) the staves split by hand; otherwise at middle C. The score is auto-quantized, so treat it as a readable draft.
+
 ## Honesty notes
 
 Output is an original piece "in the style of", not a copy, and quality depends on the SoundFont. Tell the user how to play MIDI on Android (Piano MIDI Player, Midi Voyager) and that the MP3 plays everywhere.
