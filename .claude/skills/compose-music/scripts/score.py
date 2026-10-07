@@ -10,20 +10,22 @@ from music21 import stream, note, chord, meter, tempo, clef, metadata, key
 
 def build(mid, title, bpb=4, grid=4, lh_treble=False):
     m = pm.PrettyMIDI(mid)
-    bpm = m.get_tempo_changes()[1][0]
-    beat = 60 / bpm
+    times, tempi = m.get_tempo_changes()
+    bpm = tempi[0]
+    q = lambda sec: m.time_to_tick(sec) / m.resolution     # position in quarter notes (follows tempo changes)
     hands = {'rh': {}, 'lh': {}}
     two = len(m.instruments) > 1   # instrument 0 = right hand, 1 = left hand; otherwise split at middle C
     for k, inst in enumerate(m.instruments[:2]):
         for n in inst.notes:
-            pos = round(n.start / beat * grid) / grid
+            pos = round(q(n.start) * grid) / grid
             h = ('rh' if k == 0 else 'lh') if two else ('rh' if n.pitch >= 60 else 'lh')
             hands[h].setdefault(pos, set()).add(n.pitch)
     end = max(max(h) for h in hands.values() if h) + 1
     sc = stream.Score(); sc.metadata = metadata.Metadata(title=title, composer='Claude')
     for name, cl in (('rh', clef.TrebleClef()), ('lh', clef.Treble8vbClef() if lh_treble else clef.BassClef())):
         part = stream.Part(); part.insert(0, cl); part.insert(0, meter.TimeSignature('%d/4' % bpb))
-        part.insert(0, tempo.MetronomeMark(number=round(bpm)))
+        for ts, tp in zip(times, tempi):
+            if name == 'rh': part.insert(round(q(ts) * grid) / grid, tempo.MetronomeMark(number=round(tp)))
         offs = sorted(hands[name]); 
         for i, o in enumerate(offs):
             nxt = offs[i + 1] if i + 1 < len(offs) else end

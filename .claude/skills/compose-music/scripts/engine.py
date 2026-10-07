@@ -5,7 +5,7 @@ import pretty_midi as pm
 from music import Piece, N
 
 CH = {'Gm': [7, 10, 2], 'Gm7': [7, 10, 2, 5], 'Cm': [0, 3, 7], 'Cm7': [0, 3, 7, 10], 'D7': [2, 6, 9, 0],
-      'Eb': [3, 7, 10], 'Bb': [10, 2, 5], 'F': [5, 9, 0]}
+      'Eb': [3, 7, 10], 'Bb': [10, 2, 5], 'F': [5, 9, 0], 'Ab': [8, 0, 3], 'C': [0, 4, 7]}
 NAT = [7, 9, 10, 0, 2, 3, 5]; HARM = [7, 9, 10, 0, 2, 3, 6]
 
 
@@ -39,6 +39,12 @@ def arp(notes, dur=.25): return [(midi(x), dur) for x in notes]
 
 
 def chromatic(lo, hi, dur=.25): return [(m, dur) for m in range(midi(lo), midi(hi) + 1)]
+
+
+def turn(note, dur, ch):
+    """Chopin-style turn after an initial half beat: main, upper, main, lower, main, then hold."""
+    m = midi(note)
+    return [(m, .5), (step(m, 1, ch), .125), (m, .125), (step(m, -1, ch), .125), (m, .125), (m, dur - 1)]
 
 
 def below(ch, top, n=2, gap=3, lo=0):
@@ -76,6 +82,17 @@ class Engine:
             for n in lh_chord(c1): add(L, n, t0 + 1.5 * B, B * (1.2 if pat != 'tango_soft' else 1.8), v - (14 if pat == 'tango_soft' else 0))
             if pat != 'tango_soft':
                 for n in lh_chord(c2): add(L, n, t0 + 3 * B, B * .9, v)
+        elif pat == 'noct':                                   # singing bass, soft chord on the second beat of each half
+            for h, ch in enumerate((c1, c2)):
+                x = t0 + 2 * h * B
+                add(L, lh_bass(ch), x, 2 * B * .98, v + 4)
+                for n in lh_chord(ch): add(L, n, x + B, B * .92, v - 14)
+        elif pat == 'drive':                                  # fast section: bass, chord, bass, syncopated chords
+            b1, b2 = lh_bass(c1), lh_bass(c2)
+            for n in (b1, b1 + 12): add(L, n, t0, B * .9, v + 10)
+            for n in lh_chord(c1): add(L, n, t0 + B, B * .45, v)
+            for n in (b2, b2 + 12): add(L, n, t0 + 2 * B, B * .9, v + 8)
+            for n in lh_chord(c2): add(L, n, t0 + 2.5 * B, B * .45, v - 4); add(L, n, t0 + 3 * B, B * .9, v)
         elif pat == 'hold':
             b = lh_bass(c1)
             for n in (b, b + 12): add(L, n, t0, 4 * B, v + 8)
