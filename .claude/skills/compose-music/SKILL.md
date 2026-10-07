@@ -30,6 +30,7 @@ Claude cannot emit audio directly. The workflow is: write the notes as code -> s
 - **Two-part nocturne (slow + fast)**: see `scripts/nocturne_two_parts.py` (two Engines at different tempi merged into one MIDI with a tempo change via `mido`; `score.py` follows tempo changes). Unusual-melody devices: Dorian raised sixth, 7th leap, Neapolitan Ab chord, chromatic sighs.
 - **Improvisation material** (lead sheet + development ladder + backing track): see `scripts/improvisation_ladder.py` (melody and chord symbols are the single source for both the LilyPond lead sheet and the audio; `embellish()` ornaments the melody; `--key-flats 2` in score.py for G minor).
 - **Programmatic concert / story piece** (tempo curves, any key, several movements): see `scripts/dsl_piano.py` (text DSL: chords, melody tokens, runs, trills, left-hand patterns, accelerando/ritardando) and `scripts/nocturne_concerto.py` ("Fragile Day", one theme transformed across four movements). Check per-movement loudness: sampled pianos are very quiet at low velocity, so soft movements need higher velocities.
+- **Chopin Op. 9 No. 2 style (12/8 nocturne in E-flat)**: see `scripts/nocturne_eb_major.py` (DSL left-hand pattern `n12`, ornamented repeats, cadenza, coda). Original melody, not a copy.
 - **Shostakovich**/: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
 
 ## Sheet music

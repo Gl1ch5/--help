@@ -7,7 +7,7 @@ Movement(name, beats_per_bar, key, bpm).bar(chords, melody, lh=..., rh=...)
      ~E5:2      trill           gE5         grace note before the next note
      >C6-F5:.25 scale run (stepwise from the first to the last note, in the bar's key; key 'chrom' = chromatic)
      v70        set velocity from here
-  lh   : waltz | noct | hurry | trem | pulse | drone | bell | none
+  lh   : waltz | noct | n12 | hurry | trem | pulse | drone | bell | none
   rh   : solo | oct | chord | oct+   (doubling of the melody)
 Tempo: m.tempo(bpm, ramp_beats) at the current position (accelerando / ritardando).
 """
@@ -189,6 +189,12 @@ class Movement:
             self._ev(a, a + min(L, 1) * sh(.9), bn, v + 10)
             for i in range(1, int(L)):
                 for m in vo: self._ev(a + i, a + i + sh(.85), m, v)
+        elif pat == 'n12':       # 12/8 nocturne rocking: per dotted quarter group, bass then two chord tones
+            vo2 = voicing(name, 55)
+            for g in range(int(L // 1.5)):
+                t = a + 1.5 * g; pr = (vo2[0], vo2[1]) if g % 2 == 0 else (vo2[1], vo2[2])
+                self._ev(t, t + 1.45, bn, v + 8)
+                self._ev(t + .5, t + 1.4, pr[0], v - 6); self._ev(t + 1.0, t + 1.5, pr[1], v - 6)
         elif pat == 'noct':
             seq = [bn, vo[0], vo[1], vo[2], vo[1], vo[0]]
             for i in range(int(L * 2)): self._ev(a + i * .5, a + i * .5 + .95, seq[i % 6], v + (8 if i == 0 else 0))
