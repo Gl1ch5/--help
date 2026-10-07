@@ -31,7 +31,7 @@ def render(mid, mp3, sf2=None, lufs=-16):
     sf2 = find_sf2(sf2)
     wav = mp3.rsplit('.', 1)[0] + '.tmp.wav'
     subprocess.run(['fluidsynth', '-ni', '-g', '1.0', '-r', '44100', '-F', wav, sf2, mid], check=True)
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-af', 'loudnorm=I=%d:TP=-1.0' % lufs, '-b:a', '192k', mp3], check=True)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-af', 'loudnorm=I=%d:LRA=20:TP=-1.0' % lufs, '-b:a', '192k', mp3], check=True)
     os.remove(wav)
 
 
