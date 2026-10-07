@@ -1,5 +1,6 @@
 """MIDI -> piano score PDF (via music21 + LilyPond).
-usage: python score.py in.mid out.pdf "Title" [beats_per_bar=4] [grid_per_beat=4]
+usage: python score.py in.mid out.pdf "Title" [beats_per_bar=4] [grid_per_beat=4] [--lh-treble]
+--lh-treble: left hand in treble clef with an 8 below (reads like treble, sounds an octave lower).
 Notes are quantized to the grid, split between hands at middle C, and written legato
 (each onset lasts until the next onset in the same hand)."""
 import os, sys, subprocess, tempfile
@@ -7,7 +8,7 @@ import pretty_midi as pm
 from music21 import stream, note, chord, meter, tempo, clef, metadata, key
 
 
-def build(mid, title, bpb=4, grid=4):
+def build(mid, title, bpb=4, grid=4, lh_treble=False):
     m = pm.PrettyMIDI(mid)
     bpm = m.get_tempo_changes()[1][0]
     beat = 60 / bpm
@@ -20,7 +21,7 @@ def build(mid, title, bpb=4, grid=4):
             hands[h].setdefault(pos, set()).add(n.pitch)
     end = max(max(h) for h in hands.values() if h) + 1
     sc = stream.Score(); sc.metadata = metadata.Metadata(title=title, composer='Claude')
-    for name, cl in (('rh', clef.TrebleClef()), ('lh', clef.BassClef())):
+    for name, cl in (('rh', clef.TrebleClef()), ('lh', clef.Treble8vbClef() if lh_treble else clef.BassClef())):
         part = stream.Part(); part.insert(0, cl); part.insert(0, meter.TimeSignature('%d/4' % bpb))
         part.insert(0, tempo.MetronomeMark(number=round(bpm)))
         offs = sorted(hands[name]); 
@@ -37,8 +38,10 @@ def build(mid, title, bpb=4, grid=4):
 
 
 if __name__ == '__main__':
-    mid, out, title = sys.argv[1:4]
-    sc = build(mid, title, int(sys.argv[4]) if len(sys.argv) > 4 else 4, int(sys.argv[5]) if len(sys.argv) > 5 else 4)
+    lh_treble = '--lh-treble' in sys.argv
+    args = [a for a in sys.argv if a != '--lh-treble']
+    mid, out, title = args[1:4]
+    sc = build(mid, title, int(args[4]) if len(args) > 4 else 4, int(args[5]) if len(args) > 5 else 4, lh_treble)
     d = tempfile.mkdtemp(); xml = os.path.join(d, 's.musicxml'); sc.write('musicxml', fp=xml)
     # musicxml2ly repeats the title as a subtitle
     subprocess.run(['musicxml2ly', '-o', os.path.join(d, 's.ly'), xml], check=True, capture_output=True)
