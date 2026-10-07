@@ -26,6 +26,7 @@ Claude cannot emit audio directly. The workflow is: write the notes as code -> s
 - **Hip-hop / Eminem-style piano**: see `scripts/eminem_style_piano.py` (G minor, 88 bpm, 16th ostinato in the right hand, left hand only single bass notes or fifths, octave hook). Default score is bass clef; prefer it unless the user asks for `--lh-treble`.
 - **Rachmaninoff-style in G minor**: see `scripts/rachmaninoff_g_minor.py` (i-iv-V7-i, VI, III; left hand bass octaves + chords, right hand chords and octaves, lyrical middle section). Use it when the user wants chord-based left hand in a key they improvise in.
 - **Mixed Mozart + Chopin + Rachmaninoff**: see `scripts/fantasy_g_minor.py` (Mozart period with runs, Chopin ornamented nocturne with turns and rubato, Rachmaninoff climax; left hand only bass + chords).
+- **Tango (Piazzolla spirit)**: see `scripts/tango_g_minor.py` built on `scripts/engine.py` (shared two-hand helpers: left hand bass + chords, right hand melody/chords/octaves/runs; 3+3+2 accents, chromatic fire section).
 - **Shostakovich**: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
 
 ## Sheet music
