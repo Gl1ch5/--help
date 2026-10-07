@@ -1,6 +1,6 @@
 """Render a MIDI file to MP3 with FluidSynth + a piano SoundFont.
 
-usage: python render.py in.mid out.mp3 [soundfont.sf2]
+usage: python render.py in.mid out.mp3 [soundfont.sf2] [target LUFS, default -16; -11 = loud]
 SoundFont lookup: argument, $PIANO_SF2, a cached Salamander Grand Piano
 (downloaded once from freepats.zenvoid.org, CC-BY), then FluidR3_GM.
 """
@@ -27,13 +27,14 @@ def find_sf2(arg=None):
         return '/usr/share/sounds/sf2/FluidR3_GM.sf2'  # apt install fluidsynth fluid-soundfont-gm
 
 
-def render(mid, mp3, sf2=None):
+def render(mid, mp3, sf2=None, lufs=-16):
     sf2 = find_sf2(sf2)
     wav = mp3.rsplit('.', 1)[0] + '.tmp.wav'
     subprocess.run(['fluidsynth', '-ni', '-g', '1.0', '-r', '44100', '-F', wav, sf2, mid], check=True)
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-af', 'loudnorm=I=-16:TP=-1.5', '-b:a', '192k', mp3], check=True)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wav, '-af', 'loudnorm=I=%d:TP=-1.0' % lufs, '-b:a', '192k', mp3], check=True)
     os.remove(wav)
 
 
 if __name__ == '__main__':
-    render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
+    render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None,
+           int(sys.argv[4]) if len(sys.argv) > 4 else -16)

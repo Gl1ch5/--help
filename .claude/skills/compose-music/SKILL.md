@@ -21,6 +21,7 @@ Claude cannot emit audio directly. The workflow is: write the notes as code -> s
 
 - **Mozart / Classical**: major keys, 4/4 or 2/4, 4+4 bar phrases (question/answer), Alberti bass (`accomp='alberti'`), scale runs in 16ths, tonic -> dominant -> tonic; B theme in the dominant (G major for C). No pedal, light touch, tempo 120-132.
 - **Chopin / Romantic**: 3/4 or 4/4 (nocturne 12/8), singing right hand over arpeggiated left hand (broken chords spanning 2 octaves), chromatic passing tones, ornaments, rubato (vary note timing by a few ms to tens of ms), sustain pedal each bar (`pedal=True`), tempo 60-90.
+- **Chopin Revolutionary-style etude**: see `scripts/revolutionary_etude.py` (non-stop 16th arpeggio LH, octave+chord RH, fff); render loud with `render.py in.mid out.mp3 "" -11`.
 - **Shostakovich**: minor keys with ironic major-key shifts (A minor -> F major -> E7), waltz oom-pah-pah (`accomp='oompah'`, 3 beats per bar), tritone jumps, clipped dry accompaniment, accents on beat 1, tempo ~150.
 
 ## Honesty notes
